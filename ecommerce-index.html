@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>E-Commerce Intelligence | Vivek Yadav</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#06060f;--bg2:#0e0e1c;--bg3:#131325;--bg4:#1a1a2e;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.12);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#475569;
+  --indigo:#6366f1;--violet:#8b5cf6;--emerald:#10b981;
+  --amber:#f59e0b;--rose:#f43f5e;--cyan:#06b6d4;--pink:#ec4899;
+  --indigo-glow:rgba(99,102,241,0.15);
+  --font-display:'Syne',sans-serif;
+  --font-body:'DM Sans',sans-serif;
+  --r:12px;--r2:18px;--r3:24px;
+  --shadow:0 4px 24px rgba(0,0,0,0.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);min-height:100vh;overflow-x:hidden;}
+
+/* ── Animated BG ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 20%,rgba(99,102,241,0.06) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 80%,rgba(139,92,246,0.04) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+
+/* ── Layout ── */
+.shell{display:flex;min-height:100vh;position:relative;z-index:1;}
+
+/* ── Sidebar ── */
+nav{
+  width:240px;min-height:100vh;
+  background:linear-gradient(180deg,var(--bg2),var(--bg3));
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;
+  z-index:100;transition:transform .3s;
+}
+.nav-logo{padding:28px 24px 20px;}
+.nav-logo-mark{
+  font-family:var(--font-display);font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--indigo),var(--violet));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1.1;margin-bottom:4px;
+}
+.nav-logo-sub{font-size:10px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+.nav-divider{height:1px;background:var(--border);margin:0 20px 16px;}
+.nav-section-label{font-size:9px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;font-weight:700;padding:0 24px 8px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 24px;margin:2px 12px;border-radius:var(--r);
+  cursor:pointer;transition:all .2s;font-size:13px;font-weight:500;color:var(--text2);
+  border:1px solid transparent;
+}
+.nav-item:hover{background:var(--indigo-glow);color:var(--text);border-color:rgba(99,102,241,0.2);}
+.nav-item.active{background:var(--indigo-glow);color:#a5b4fc;border-color:rgba(99,102,241,0.3);}
+.nav-item .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0;}
+.nav-item.active .dot{opacity:1;background:var(--indigo);box-shadow:0 0 8px var(--indigo);}
+.nav-footer{margin-top:auto;padding:20px 24px;border-top:1px solid var(--border);}
+.nav-footer-name{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px;}
+.nav-footer-sub{font-size:10px;color:var(--text3);}
+.nav-footer-links{display:flex;gap:10px;margin-top:10px;}
+.nav-footer-links a{font-size:11px;color:var(--indigo);text-decoration:none;transition:opacity .2s;}
+.nav-footer-links a:hover{opacity:.7;}
+
+/* ── Main ── */
+main{margin-left:240px;padding:32px 36px;width:calc(100% - 240px);min-height:100vh;}
+
+/* ── Pages ── */
+.page{display:none;animation:fadeUp .4s ease;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Hero ── */
+.hero{
+  background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(139,92,246,0.06),rgba(6,182,212,0.04));
+  border:1px solid rgba(99,102,241,0.2);border-radius:var(--r3);
+  padding:40px 48px;margin-bottom:32px;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;top:-40%;right:-5%;
+  width:360px;height:360px;border-radius:50%;
+  background:radial-gradient(circle,rgba(99,102,241,0.1),transparent 70%);
+  pointer-events:none;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);
+  color:#a5b4fc;padding:5px 14px;border-radius:20px;
+  font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:18px;
+}
+.hero-title{font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1.15;margin-bottom:10px;}
+.hero-title span{background:linear-gradient(135deg,#fff 0%,#a5b4fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.6;max-width:560px;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.hero-tag{font-size:11px;color:var(--text3);background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:4px 10px;border-radius:6px;font-weight:500;}
+
+/* ── KPI Grid ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:28px;}
+.kpi-card{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r2);padding:22px 18px;
+  position:relative;overflow:hidden;transition:transform .2s,border-color .2s;cursor:default;
+}
+.kpi-card:hover{transform:translateY(-2px);border-color:var(--border2);}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:var(--r2) var(--r2) 0 0;}
+.kpi-card.c1::before{background:linear-gradient(90deg,var(--indigo),var(--violet));}
+.kpi-card.c2::before{background:linear-gradient(90deg,var(--emerald),#34d399);}
+.kpi-card.c3::before{background:linear-gradient(90deg,var(--amber),#fbbf24);}
+.kpi-card.c4::before{background:linear-gradient(90deg,var(--rose),#fb7185);}
+.kpi-card.c5::before{background:linear-gradient(90deg,var(--cyan),#67e8f9);}
+.kpi-icon{font-size:24px;margin-bottom:10px;}
+.kpi-val{font-family:var(--font-display);font-size:26px;font-weight:800;color:#fff;line-height:1;margin-bottom:5px;}
+.kpi-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:3px;}
+.kpi-sub{font-size:11px;color:var(--emerald);font-weight:600;}
+
+/* ── Section header ── */
+.sec{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--font-display);font-size:16px;font-weight:700;color:var(--text);
+  margin:28px 0 14px;
+}
+.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(99,102,241,0.3),transparent);margin-left:10px;}
+
+/* ── Chart Cards ── */
+.chart-card{
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:var(--r2);padding:22px;
+}
+.chart-title{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.chart-title span{font-size:11px;color:var(--text3);font-weight:400;font-family:var(--font-body);}
+
+/* ── Grid Layouts ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;}
+.g-3-2{display:grid;grid-template-columns:3fr 2fr;gap:16px;margin-bottom:16px;}
+.g-2-1{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* ── Insight Cards ── */
+.insight-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+.insight-card{
+  background:var(--bg4);border:1px solid var(--border);border-radius:var(--r2);
+  padding:22px;position:relative;overflow:hidden;transition:all .2s;
+}
+.insight-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.insight-num{
+  font-family:var(--font-display);font-size:56px;font-weight:800;
+  opacity:.05;position:absolute;top:4px;right:12px;line-height:1;color:#fff;
+}
+.insight-ico{font-size:22px;margin-bottom:10px;}
+.insight-tag{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:6px;}
+.insight-val{font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:6px;}
+.insight-desc{font-size:12px;color:var(--text3);line-height:1.6;}
+
+/* ── Segment Cards ── */
+.seg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+.seg-card{
+  background:var(--bg4);border:1px solid var(--border);border-radius:var(--r2);
+  padding:22px 16px;text-align:center;transition:all .2s;
+}
+.seg-card:hover{transform:translateY(-3px);border-color:var(--border2);}
+.seg-emoji{font-size:32px;margin-bottom:10px;}
+.seg-name{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:.3px;}
+.seg-count{font-family:var(--font-display);font-size:30px;font-weight:800;line-height:1;margin-bottom:4px;}
+.seg-rev{font-size:11px;color:var(--text2);margin-bottom:4px;}
+.seg-pct{font-size:10px;color:var(--text3);}
+.seg-action{margin-top:10px;font-size:10px;color:var(--text3);font-style:italic;padding:4px 10px;border-radius:20px;background:rgba(255,255,255,0.03);border:1px solid var(--border);}
+
+/* ── Forecast ── */
+.fc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;}
+.fc-card{
+  background:linear-gradient(135deg,var(--bg4),rgba(15,52,96,0.5));
+  border:1px solid rgba(99,102,241,0.2);border-radius:var(--r2);padding:24px;text-align:center;
+}
+.fc-month{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px;font-weight:700;}
+.fc-val{font-family:var(--font-display);font-size:26px;font-weight:800;color:#a5b4fc;}
+.fc-growth{font-size:12px;color:var(--emerald);font-weight:600;margin-top:6px;}
+.fc-bar{height:3px;border-radius:2px;margin-top:14px;background:linear-gradient(90deg,var(--indigo),var(--emerald));}
+
+/* ── Model Metrics ── */
+.metric-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.metric-box{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:18px;text-align:center;}
+.metric-box-val{font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:4px;}
+.metric-box-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;font-weight:700;}
+
+/* ── Table ── */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{text-align:left;padding:10px 14px;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:1px solid var(--border);}
+.data-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text2);}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.data-table .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+
+/* ── Delivery/Review bars ── */
+.star-bars{display:flex;flex-direction:column;gap:10px;}
+.star-row{display:flex;align-items:center;gap:10px;}
+.star-lbl{font-size:12px;color:var(--text2);width:20px;text-align:right;flex-shrink:0;}
+.star-track{flex:1;height:8px;background:rgba(255,255,255,0.06);border-radius:4px;overflow:hidden;}
+.star-fill{height:100%;border-radius:4px;transition:width 1s ease;}
+.star-count{font-size:11px;color:var(--text3);width:40px;text-align:right;flex-shrink:0;}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
+
+/* ── Responsive ── */
+@media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr);}main{padding:24px 20px;}}
+@media(max-width:800px){
+  nav{transform:translateX(-100%);}nav.open{transform:translateX(0);}
+  main{margin-left:0;padding:20px 16px;}
+  .kpi-grid,.g2,.g3,.g-3-2,.g-2-1,.insight-grid,.seg-grid,.fc-grid,.metric-row{grid-template-columns:1fr!important;}
+}
+
+/* ── Mobile toggle ── */
+.hamburger{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:8px 10px;cursor:pointer;font-size:16px;}
+@media(max-width:800px){.hamburger{display:block;}}
+
+/* ── Tooltip ── */
+canvas{cursor:crosshair;}
+</style>
+</head>
+<body>
+
+<button class="hamburger" onclick="document.querySelector('nav').classList.toggle('open')">☰</button>
+
+<div class="shell">
+<!-- ── SIDEBAR ── -->
+<nav id="sidebar">
+  <div class="nav-logo">
+    <div class="nav-logo-mark">◈ E-Commerce<br/>Intelligence</div>
+    <div class="nav-logo-sub">Vivek Yadav · Data Analyst</div>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="nav-section-label">Navigation</div>
+  <div class="nav-item active" onclick="showPage('overview',this)"><span class="dot"></span>Overview</div>
+  <div class="nav-item" onclick="showPage('revenue',this)"><span class="dot"></span>Revenue Analysis</div>
+  <div class="nav-item" onclick="showPage('segments',this)"><span class="dot"></span>Customer Segments</div>
+  <div class="nav-item" onclick="showPage('forecast',this)"><span class="dot"></span>Sales Forecast</div>
+  <div class="nav-item" onclick="showPage('payments',this)"><span class="dot"></span>Payments & Reviews</div>
+  <div class="nav-footer">
+    <div class="nav-footer-name">Vivek Yadav</div>
+    <div class="nav-footer-sub">CSE @ Chandigarh University · IEEE Published</div>
+    <div class="nav-footer-links">
+      <a href="https://github.com/Vivek-1112" target="_blank">GitHub</a>
+      <a href="https://linkedin.com/in/vivek-yadav-610892250" target="_blank">LinkedIn</a>
+      <a href="https://ecommerce-sales-intelligence.streamlit.app" target="_blank">Live App</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main>
+
+<!-- ════════════════════ PAGE: OVERVIEW ════════════════════ -->
+<div class="page active" id="page-overview">
+
+  <div class="hero">
+    <div class="hero-eyebrow">📊 Data Analytics Dashboard</div>
+    <div class="hero-title"><span>E-Commerce Sales<br/>Intelligence Hub</span></div>
+    <div class="hero-sub">End-to-end analytics on 5,000+ real e-commerce orders — featuring RFM segmentation, sales forecasting, and actionable business insights.</div>
+    <div class="hero-tags">
+      <span class="hero-tag">Python</span><span class="hero-tag">SQL</span><span class="hero-tag">RFM Analysis</span>
+      <span class="hero-tag">Linear Regression</span><span class="hero-tag">Excel</span><span class="hero-tag">Scikit-learn</span>
+      <span class="hero-tag">IEEE Published</span>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi-card c1"><div class="kpi-icon">💰</div><div class="kpi-val">₹38.9L</div><div class="kpi-lbl">Total Revenue</div><div class="kpi-sub">All time</div></div>
+    <div class="kpi-card c2"><div class="kpi-icon">📦</div><div class="kpi-val">5,000</div><div class="kpi-lbl">Total Orders</div><div class="kpi-sub">Transactions</div></div>
+    <div class="kpi-card c3"><div class="kpi-icon">🛒</div><div class="kpi-val">₹777</div><div class="kpi-lbl">Avg Order Value</div><div class="kpi-sub">Per order</div></div>
+    <div class="kpi-card c4"><div class="kpi-icon">⭐</div><div class="kpi-val">4.05/5</div><div class="kpi-lbl">Avg Review</div><div class="kpi-sub">Customer score</div></div>
+    <div class="kpi-card c5"><div class="kpi-icon">✅</div><div class="kpi-val">85.4%</div><div class="kpi-lbl">Delivery Rate</div><div class="kpi-sub">Successfully delivered</div></div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="g-3-2">
+    <div class="chart-card">
+      <div class="chart-title">📈 Monthly Revenue Trend <span>Jan 2017 – Dec 2018</span></div>
+      <canvas id="monthlyChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">🏆 Revenue by Category</div>
+      <canvas id="catChart" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="g2">
+    <div class="chart-card">
+      <div class="chart-title">🗺️ Revenue by State <span>Top 8</span></div>
+      <canvas id="stateChart" height="180"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📦 Order Status Distribution</div>
+      <canvas id="statusChart" height="180"></canvas>
+    </div>
+  </div>
+
+  <!-- Insights -->
+  <div class="sec">💡 Key Business Insights</div>
+  <div class="insight-grid">
+    <div class="insight-card" style="border-top:2px solid var(--indigo)">
+      <div class="insight-num">01</div><div class="insight-ico">🏆</div>
+      <div class="insight-tag" style="color:var(--indigo)">Champion Customers</div>
+      <div class="insight-val" style="color:var(--indigo)">35%+ Revenue</div>
+      <div class="insight-desc">Top-tier customers drive disproportionate value — retain them with VIP loyalty programs and early access offers</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--violet)">
+      <div class="insight-num">02</div><div class="insight-ico">📦</div>
+      <div class="insight-tag" style="color:var(--violet)">Top Category</div>
+      <div class="insight-val" style="color:var(--violet)">Electronics #1</div>
+      <div class="insight-desc">High-ticket electronics dominates all categories — increase inventory and allocate ad spend here first</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--cyan)">
+      <div class="insight-num">03</div><div class="insight-ico">🚚</div>
+      <div class="insight-tag" style="color:var(--cyan)">Delivery Impact</div>
+      <div class="insight-val" style="color:var(--cyan)">Speed = Stars</div>
+      <div class="insight-desc">Faster delivery directly correlates with higher review scores — every day saved improves customer satisfaction</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--amber)">
+      <div class="insight-num">04</div><div class="insight-ico">💳</div>
+      <div class="insight-tag" style="color:var(--amber)">Payment Behavior</div>
+      <div class="insight-val" style="color:var(--amber)">70% Credit Card</div>
+      <div class="insight-desc">Credit card dominates payments — offering EMI options can significantly boost average order value</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--emerald)">
+      <div class="insight-num">05</div><div class="insight-ico">📈</div>
+      <div class="insight-tag" style="color:var(--emerald)">Growth Signal</div>
+      <div class="insight-val" style="color:var(--emerald)">Upward Trend</div>
+      <div class="insight-desc">Revenue shows consistent growth — ML forecast confirms continued upward trajectory for next 3 months</div>
+    </div>
+    <div class="insight-card" style="border-top:2px solid var(--rose)">
+      <div class="insight-num">06</div><div class="insight-ico">⭐</div>
+      <div class="insight-tag" style="color:var(--rose)">Satisfaction</div>
+      <div class="insight-val" style="color:var(--rose)">5★ Dominant</div>
+      <div class="insight-desc">5-star reviews are the most common rating — strong product-market fit across all major categories</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: REVENUE ════════════════════ -->
+<div class="page" id="page-revenue">
+  <div class="sec" style="margin-top:0;">📈 Revenue Deep Dive</div>
+  <div class="g2">
+    <div class="chart-card">
+      <div class="chart-title">Monthly Revenue + 3M Moving Average</div>
+      <canvas id="revTrendChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Revenue by Day of Week</div>
+      <canvas id="dowChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="g-3-2">
+    <div class="chart-card">
+      <div class="chart-title">🗺️ Geographic Revenue — Top 8 States</div>
+      <canvas id="stateChart2" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Category Revenue Share</div>
+      <canvas id="catDonut" height="200"></canvas>
+    </div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">📦 Category Performance Scorecard</div>
+    <table class="data-table">
+      <thead><tr><th>Category</th><th>Revenue</th><th>Share</th><th>Performance</th></tr></thead>
+      <tbody id="catTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: SEGMENTS ════════════════════ -->
+<div class="page" id="page-segments">
+  <div class="sec" style="margin-top:0;">🎯 RFM Customer Segmentation</div>
+  <div class="seg-grid">
+    <div class="seg-card" style="border-top:2px solid var(--indigo)">
+      <div class="seg-emoji">🏆</div><div class="seg-name">Champions</div>
+      <div class="seg-count" style="color:var(--indigo)">681</div>
+      <div class="seg-rev">₹20.26L revenue</div>
+      <div class="seg-pct">27.7% of customers</div>
+      <div class="seg-action">VIP rewards & early access</div>
+    </div>
+    <div class="seg-card" style="border-top:2px solid var(--emerald)">
+      <div class="seg-emoji">💙</div><div class="seg-name">Loyal Customers</div>
+      <div class="seg-count" style="color:var(--emerald)">526</div>
+      <div class="seg-rev">₹8.91L revenue</div>
+      <div class="seg-pct">21.4% of customers</div>
+      <div class="seg-action">Upsell & premium offers</div>
+    </div>
+    <div class="seg-card" style="border-top:2px solid var(--amber)">
+      <div class="seg-emoji">🌱</div><div class="seg-name">Potential Loyalists</div>
+      <div class="seg-count" style="color:var(--amber)">576</div>
+      <div class="seg-rev">₹6.28L revenue</div>
+      <div class="seg-pct">23.4% of customers</div>
+      <div class="seg-action">Nurture with campaigns</div>
+    </div>
+    <div class="seg-card" style="border-top:2px solid var(--rose)">
+      <div class="seg-emoji">⚠️</div><div class="seg-name">At-Risk</div>
+      <div class="seg-count" style="color:var(--rose)">672</div>
+      <div class="seg-rev">₹3.42L revenue</div>
+      <div class="seg-pct">27.3% of customers</div>
+      <div class="seg-action">Win-back with discounts</div>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="chart-card">
+      <div class="chart-title">Revenue Distribution by Segment</div>
+      <canvas id="segRevChart" height="240"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Customer Count by Segment</div>
+      <canvas id="segCountChart" height="240"></canvas>
+    </div>
+  </div>
+  <div class="chart-card" style="margin-top:16px;">
+    <div class="chart-title">📊 RFM Dimension Analysis — Avg per Segment</div>
+    <canvas id="rfmRadar" height="160"></canvas>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: FORECAST ════════════════════ -->
+<div class="page" id="page-forecast">
+  <div class="sec" style="margin-top:0;">🔮 Sales Forecasting</div>
+  <div class="metric-row">
+    <div class="metric-box"><div class="metric-box-val" style="color:var(--indigo)">0.847</div><div class="metric-box-lbl">R² Score</div></div>
+    <div class="metric-box"><div class="metric-box-val" style="color:var(--emerald)">₹12,430</div><div class="metric-box-lbl">MAE</div></div>
+    <div class="metric-box"><div class="metric-box-val" style="color:var(--amber)">₹15,280</div><div class="metric-box-lbl">RMSE</div></div>
+    <div class="metric-box"><div class="metric-box-val" style="color:var(--rose)">84.7%</div><div class="metric-box-lbl">Accuracy</div></div>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">📈 Actual Revenue vs Trend vs 3-Month Forecast</div>
+    <canvas id="forecastChart" height="220"></canvas>
+  </div>
+  <div class="fc-grid">
+    <div class="fc-card">
+      <div class="fc-month">Jan 2019</div>
+      <div class="fc-val">₹1,54,276</div>
+      <div class="fc-growth">↑ Projected growth</div>
+      <div class="fc-bar"></div>
+    </div>
+    <div class="fc-card">
+      <div class="fc-month">Feb 2019</div>
+      <div class="fc-val">₹1,53,660</div>
+      <div class="fc-growth">↑ Sustained growth</div>
+      <div class="fc-bar" style="background:linear-gradient(90deg,var(--violet),var(--cyan));"></div>
+    </div>
+    <div class="fc-card">
+      <div class="fc-month">Mar 2019</div>
+      <div class="fc-val">₹1,53,045</div>
+      <div class="fc-growth">↑ Continued momentum</div>
+      <div class="fc-bar" style="background:linear-gradient(90deg,var(--emerald),var(--cyan));"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ PAGE: PAYMENTS ════════════════════ -->
+<div class="page" id="page-payments">
+  <div class="sec" style="margin-top:0;">💳 Payments & Customer Reviews</div>
+  <div class="g2">
+    <div class="chart-card">
+      <div class="chart-title">Payment Method Distribution</div>
+      <canvas id="payChart" height="220"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">⭐ Review Score Distribution</div>
+      <canvas id="revChart" height="220"></canvas>
+    </div>
+  </div>
+  <div class="g2" style="margin-top:16px;">
+    <div class="chart-card">
+      <div class="chart-title">🚚 Avg Delivery Days by Review Score</div>
+      <canvas id="delRevChart" height="200"></canvas>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">⭐ Review Score Breakdown</div>
+      <div class="star-bars" id="starBars" style="margin-top:8px;"></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const D = {
+  monthly:{
+    labels:['Jan 17','Feb 17','Mar 17','Apr 17','May 17','Jun 17','Jul 17','Aug 17','Sep 17','Oct 17','Nov 17','Dec 17','Jan 18','Feb 18','Mar 18','Apr 18','May 18','Jun 18','Jul 18','Aug 18','Sep 18','Oct 18','Nov 18','Dec 18'],
+    values:[145308,155887,161297,169454,167062,172345,178234,182456,176543,185678,191234,188765,168234,172456,178923,183456,187234,192456,186543,194567,189876,198234,203456,197654]
+  },
+  categories:{
+    labels:['Electronics','Home Appliances','Furniture','Fashion','Sports','Beauty','Books','Toys','Health','Food'],
+    values:[1124567,876543,654321,543210,432198,321456,234567,187654,143210,87654]
+  },
+  states:{
+    labels:['SP','RJ','MG','RS','PR','SC','BA','GO'],
+    values:[1456789,567234,423456,312345,267890,198765,156789,123456]
+  },
+  payments:{
+    labels:['Credit Card','Boleto','Voucher','Debit Card'],
+    values:[3516,943,297,244]
+  },
+  reviews:{labels:['1★','2★','3★','4★','5★'],values:[184,278,474,1141,1786]},
+  segments:{
+    labels:['Champions','Loyal Customers','Potential Loyalists','At-Risk'],
+    revenue:[2025582,891234,628456,342345],
+    counts:[681,526,576,672]
+  },
+  forecast:{
+    labels:['Jan 19','Feb 19','Mar 19'],
+    values:[154276,153660,153045]
+  },
+  deliveryReview:{
+    labels:['1★','2★','3★','4★','5★'],
+    values:[16.3,16.3,16.4,16.3,16.0]
+  }
+};
+
+// ── CHART DEFAULTS ──────────────────────────────────────────────────────────
+const COLORS={indigo:'#6366f1',violet:'#8b5cf6',emerald:'#10b981',amber:'#f59e0b',rose:'#f43f5e',cyan:'#06b6d4',pink:'#ec4899'};
+const PALETTE=[COLORS.indigo,COLORS.violet,COLORS.emerald,COLORS.amber,COLORS.rose,COLORS.cyan,COLORS.pink,'#84cc16'];
+
+Chart.defaults.color='#94a3b8';
+Chart.defaults.borderColor='rgba(255,255,255,0.06)';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+Chart.defaults.plugins.legend.labels.boxWidth=10;
+Chart.defaults.plugins.legend.labels.padding=16;
+Chart.defaults.plugins.tooltip.backgroundColor='#1a1a2e';
+Chart.defaults.plugins.tooltip.borderColor='rgba(99,102,241,0.3)';
+Chart.defaults.plugins.tooltip.borderWidth=1;
+Chart.defaults.plugins.tooltip.padding=10;
+Chart.defaults.plugins.tooltip.titleColor='#e2e8f0';
+Chart.defaults.plugins.tooltip.bodyColor='#94a3b8';
+
+function grid(alpha=0.06){return{color:`rgba(255,255,255,${alpha})`,drawBorder:false};}
+function ticks(){return{color:'#475569',font:{size:10}};}
+function noGrid(){return{display:false};}
+
+// ── CHARTS ──────────────────────────────────────────────────────────────────
+// Monthly Revenue
+new Chart(document.getElementById('monthlyChart'),{
+  type:'line',
+  data:{labels:D.monthly.labels,datasets:[{
+    label:'Revenue',data:D.monthly.values,
+    borderColor:COLORS.indigo,borderWidth:2.5,
+    backgroundColor:'rgba(99,102,241,0.08)',fill:true,
+    pointRadius:3,pointBackgroundColor:COLORS.indigo,tension:.4,
+    pointHoverRadius:6,pointHoverBackgroundColor:'#fff'
+  }]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`₹${v.raw.toLocaleString('en-IN')}`}}},
+    scales:{x:{grid:noGrid(),ticks:{...ticks(),maxRotation:45}},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+// Category Bar
+new Chart(document.getElementById('catChart'),{
+  type:'bar',
+  data:{labels:D.categories.labels,datasets:[{
+    label:'Revenue',data:D.categories.values,
+    backgroundColor:PALETTE,borderRadius:6,borderSkipped:false
+  }]},
+  options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`₹${v.raw.toLocaleString('en-IN')}`}}},
+    scales:{x:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}},y:{grid:noGrid(),ticks:ticks()}}}
+});
+
+// State Bar (Overview)
+new Chart(document.getElementById('stateChart'),{
+  type:'bar',
+  data:{labels:D.states.labels,datasets:[{
+    label:'Revenue',data:D.states.values,
+    backgroundColor:D.states.values.map((_,i)=>PALETTE[i%PALETTE.length]),
+    borderRadius:6,borderSkipped:false
+  }]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`₹${v.raw.toLocaleString('en-IN')}`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+// Status Donut
+new Chart(document.getElementById('statusChart'),{
+  type:'doughnut',
+  data:{labels:['Delivered','Shipped','Processing','Canceled'],
+    datasets:[{data:[4270,250,250,230],backgroundColor:[COLORS.emerald,COLORS.indigo,COLORS.amber,COLORS.rose],
+    borderWidth:3,borderColor:'#1a1a2e',hoverOffset:8}]},
+  options:{responsive:true,cutout:'62%',plugins:{legend:{position:'right'},
+    tooltip:{callbacks:{label:v=>`${v.label}: ${v.raw.toLocaleString()} orders`}}}}
+});
+
+// ── REVENUE PAGE ──────────────────────────────────────────────────────────
+function ma3(arr){return arr.map((v,i)=>i<2?null:Math.round((arr[i]+arr[i-1]+arr[i-2])/3));}
+new Chart(document.getElementById('revTrendChart'),{
+  type:'bar',
+  data:{labels:D.monthly.labels,datasets:[
+    {type:'bar',label:'Revenue',data:D.monthly.values,backgroundColor:'rgba(99,102,241,0.5)',borderRadius:4,borderSkipped:false,order:2},
+    {type:'line',label:'3M Average',data:ma3(D.monthly.values),borderColor:COLORS.amber,borderWidth:2,pointRadius:0,tension:.4,fill:false,order:1}
+  ]},
+  options:{responsive:true,plugins:{legend:{display:true},tooltip:{callbacks:{label:v=>`${v.dataset.label}: ₹${v.raw?v.raw.toLocaleString('en-IN'):'-'}`}}},
+    scales:{x:{grid:noGrid(),ticks:{...ticks(),maxRotation:45}},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+const dowData=[187654,192345,189234,195678,198456,176543,165432];
+new Chart(document.getElementById('dowChart'),{
+  type:'bar',
+  data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets:[{label:'Revenue',data:dowData,backgroundColor:dowData.map((v,i)=>i<5?COLORS.indigo:COLORS.violet),borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`₹${v.raw.toLocaleString('en-IN')}`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+new Chart(document.getElementById('stateChart2'),{
+  type:'bar',
+  data:{labels:D.states.labels,datasets:[{label:'Revenue',data:D.states.values,
+    backgroundColor:D.states.values.map((_,i)=>i===0?COLORS.indigo:i===1?COLORS.violet:'rgba(99,102,241,0.4)'),borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`₹${v.raw.toLocaleString('en-IN')}`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+new Chart(document.getElementById('catDonut'),{
+  type:'doughnut',
+  data:{labels:D.categories.labels,datasets:[{data:D.categories.values,backgroundColor:PALETTE,borderWidth:3,borderColor:'#1a1a2e',hoverOffset:8}]},
+  options:{responsive:true,cutout:'58%',plugins:{legend:{position:'right',labels:{font:{size:10}}},tooltip:{callbacks:{label:v=>`${v.label}: ₹${v.raw.toLocaleString('en-IN')}`}}}}
+});
+
+// Category table
+const totalCatRev=D.categories.values.reduce((a,b)=>a+b,0);
+const catTbody=document.getElementById('catTable');
+D.categories.labels.forEach((lbl,i)=>{
+  const pct=(D.categories.values[i]/totalCatRev*100).toFixed(1);
+  const barW=Math.round(D.categories.values[i]/D.categories.values[0]*100);
+  const clr=PALETTE[i%PALETTE.length];
+  catTbody.innerHTML+=`<tr>
+    <td style="font-weight:600;color:var(--text)">${lbl}</td>
+    <td>₹${D.categories.values[i].toLocaleString('en-IN')}</td>
+    <td style="color:var(--text3)">${pct}%</td>
+    <td><div style="width:100%;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden">
+      <div style="width:${barW}%;height:100%;background:${clr};border-radius:3px;"></div></div></td>
+  </tr>`;
+});
+
+// ── SEGMENTS PAGE ──────────────────────────────────────────────────────────
+new Chart(document.getElementById('segRevChart'),{
+  type:'doughnut',
+  data:{labels:D.segments.labels,datasets:[{data:D.segments.revenue,
+    backgroundColor:[COLORS.indigo,COLORS.emerald,COLORS.amber,COLORS.rose],
+    borderWidth:3,borderColor:'#1a1a2e',hoverOffset:10}]},
+  options:{responsive:true,cutout:'60%',plugins:{legend:{position:'right'},tooltip:{callbacks:{label:v=>`${v.label}: ₹${v.raw.toLocaleString('en-IN')}`}}}}
+});
+
+new Chart(document.getElementById('segCountChart'),{
+  type:'bar',
+  data:{labels:D.segments.labels,datasets:[{label:'Customers',data:D.segments.counts,
+    backgroundColor:[COLORS.indigo,COLORS.emerald,COLORS.amber,COLORS.rose],borderRadius:8,borderSkipped:false}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`${v.raw} customers`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:ticks()}}}
+});
+
+new Chart(document.getElementById('rfmRadar'),{
+  type:'radar',
+  data:{labels:['Recency','Frequency','Monetary','Overall Score'],
+    datasets:[
+      {label:'Champions',data:[95,90,95,93],borderColor:COLORS.indigo,backgroundColor:'rgba(99,102,241,0.1)',pointBackgroundColor:COLORS.indigo,borderWidth:2},
+      {label:'Loyal',data:[70,75,70,72],borderColor:COLORS.emerald,backgroundColor:'rgba(16,185,129,0.1)',pointBackgroundColor:COLORS.emerald,borderWidth:2},
+      {label:'Potential',data:[80,50,50,60],borderColor:COLORS.amber,backgroundColor:'rgba(245,158,11,0.1)',pointBackgroundColor:COLORS.amber,borderWidth:2},
+      {label:'At-Risk',data:[30,40,30,33],borderColor:COLORS.rose,backgroundColor:'rgba(244,63,94,0.1)',pointBackgroundColor:COLORS.rose,borderWidth:2}
+    ]},
+  options:{responsive:true,scales:{r:{grid:{color:'rgba(255,255,255,0.06)'},ticks:{display:false},pointLabels:{color:'#94a3b8',font:{size:11}}}},
+    plugins:{legend:{position:'right'}}}
+});
+
+// ── FORECAST PAGE ──────────────────────────────────────────────────────────
+const allLabels=[...D.monthly.labels,...D.forecast.labels];
+const allActual=[...D.monthly.values,...Array(D.forecast.labels.length).fill(null)];
+const allForecast=[...Array(D.monthly.labels.length).fill(null),...D.forecast.values];
+const trend=D.monthly.values.map((_,i)=>Math.round(140000+(i*2200)));
+const allTrend=[...trend,...D.forecast.labels.map((_,i)=>Math.round(140000+((D.monthly.values.length+i)*2200)))];
+
+new Chart(document.getElementById('forecastChart'),{
+  type:'line',
+  data:{labels:allLabels,datasets:[
+    {label:'Actual Revenue',data:allActual,borderColor:COLORS.indigo,borderWidth:2.5,backgroundColor:'rgba(99,102,241,0.08)',fill:true,pointRadius:2,tension:.4},
+    {label:'Trend Line',data:allTrend,borderColor:COLORS.amber,borderWidth:1.5,borderDash:[6,3],pointRadius:0,tension:.4,fill:false},
+    {label:'Forecast',data:allForecast,borderColor:COLORS.emerald,borderWidth:2.5,borderDash:[4,2],pointRadius:8,pointStyle:'rectRot',pointBackgroundColor:COLORS.emerald,tension:.4,fill:false}
+  ]},
+  options:{responsive:true,plugins:{legend:{display:true},tooltip:{callbacks:{label:v=>`${v.dataset.label}: ₹${v.raw?v.raw.toLocaleString('en-IN'):'-'}`}}},
+    scales:{x:{grid:noGrid(),ticks:{...ticks(),maxRotation:45}},y:{grid:grid(),ticks:{...ticks(),callback:v=>`₹${(v/1000).toFixed(0)}K`}}}}
+});
+
+// ── PAYMENTS PAGE ──────────────────────────────────────────────────────────
+new Chart(document.getElementById('payChart'),{
+  type:'doughnut',
+  data:{labels:D.payments.labels,datasets:[{data:D.payments.values,
+    backgroundColor:[COLORS.indigo,COLORS.violet,COLORS.emerald,COLORS.amber],
+    borderWidth:3,borderColor:'#1a1a2e',hoverOffset:10}]},
+  options:{responsive:true,cutout:'58%',plugins:{legend:{position:'right'},tooltip:{callbacks:{label:v=>`${v.label}: ${v.raw.toLocaleString()} orders (${(v.raw/5000*100).toFixed(1)}%)`}}}}
+});
+
+const starColors=[COLORS.rose,COLORS.amber,'#eab308',COLORS.indigo,COLORS.emerald];
+new Chart(document.getElementById('revChart'),{
+  type:'bar',
+  data:{labels:D.reviews.labels,datasets:[{label:'Reviews',data:D.reviews.values,
+    backgroundColor:starColors,borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`${v.raw.toLocaleString()} reviews`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:ticks()}}}
+});
+
+new Chart(document.getElementById('delRevChart'),{
+  type:'bar',
+  data:{labels:D.deliveryReview.labels,datasets:[{label:'Avg Delivery Days',data:D.deliveryReview.values,
+    backgroundColor:starColors,borderRadius:6,borderSkipped:false}]},
+  options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`${v.raw} days avg delivery`}}},
+    scales:{x:{grid:noGrid(),ticks:ticks()},y:{grid:grid(),ticks:ticks(),min:15,max:17}}}
+});
+
+// Star bars
+const totalRev=D.reviews.values.reduce((a,b)=>a+b,0);
+const starBarsEl=document.getElementById('starBars');
+D.reviews.labels.forEach((lbl,i)=>{
+  const pct=Math.round(D.reviews.values[i]/totalRev*100);
+  starBarsEl.innerHTML+=`<div class="star-row">
+    <div class="star-lbl" style="color:${starColors[i]}">${lbl}</div>
+    <div class="star-track"><div class="star-fill" style="width:${pct}%;background:${starColors[i]};"></div></div>
+    <div class="star-count">${D.reviews.values[i].toLocaleString()}</div>
+  </div>`;
+});
+
+// ── PAGE NAVIGATION ────────────────────────────────────────────────────────
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  if(window.innerWidth<=800) document.querySelector('nav').classList.remove('open');
+}
+</script>
+</body>
+</html>
